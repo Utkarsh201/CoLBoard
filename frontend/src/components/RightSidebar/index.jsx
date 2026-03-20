@@ -165,14 +165,14 @@ export default function RightSidebar() {
 
   return (
     <>
-      <button
+      {/* <button
         type="button"
         onClick={onButtonClick}
         className="fixed right-14 top-8 -translate-y-1/2 z-50 rounded-full bg-blue-600 px-4 py-2 text-white shadow-lg hover:bg-blue-700 active:bg-blue-800 font-semibold"
         aria-label={isLoggedIn ? "Open sidebar" : "Login"}
       >
         {isLoggedIn ? "Canvases" : "Login"}
-      </button>
+      </button> */}
 
       {isLoggedIn && sidebarOpen && (
         <div className="fixed inset-0 z-40">
