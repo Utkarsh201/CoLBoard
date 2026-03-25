@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BackgroundRippleEffect } from "../hero/background-ripple-effect";
 import "./auth.css";
 
-const Login = ({ onNavigate }) => {
+const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -16,7 +18,7 @@ const Login = ({ onNavigate }) => {
       <BackgroundRippleEffect rows={14} cols={30} cellSize={52} interactive={true} />
 
       <div className="auth-card">
-        <button className="auth-back" onClick={() => onNavigate("home")}>
+        <button className="auth-back" onClick={() => navigate("/")}>
           ← Back to home
         </button>
 
@@ -55,7 +57,7 @@ const Login = ({ onNavigate }) => {
 
         <div className="auth-footer">
           Don't have an account?{" "}
-          <button className="auth-footer-link" onClick={() => onNavigate("signup")}>
+          <button className="auth-footer-link" onClick={() => navigate("/signup")}>
             Create one
           </button>
         </div>

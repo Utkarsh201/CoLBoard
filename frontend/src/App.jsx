@@ -39,33 +39,27 @@ import Boardutil from './Boardutil.jsx'
 import Home from './hero/home.jsx'
 import Login from './auth/Login.jsx'
 import Signup from './auth/Signup.jsx'
-import { useState } from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-
-function App(){
-  const [page, setPage] = useState("home");
-
-  if (page === "login") {
-    return <Login onNavigate={setPage} />;
-  }
-
-  if (page === "signup") {
-    return <Signup onNavigate={setPage} />;
-  }
-
-  if (page === "board") {
-    return (
-      <CanvasContextProvider>
-        <ToolBoxProvider>
-          <BoardProvider>
-            <Boardutil/>
-          </BoardProvider>
-        </ToolBoxProvider>
-      </CanvasContextProvider>
-    );
-  }
-
-  return <Home onStartDrawing={() => setPage("board")} onNavigate={setPage} />;
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/board" element={
+          <CanvasContextProvider>
+            <ToolBoxProvider>
+              <BoardProvider>
+                <Boardutil />
+              </BoardProvider>
+            </ToolBoxProvider>
+          </CanvasContextProvider>
+        } />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App

@@ -1,8 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { BackgroundRippleEffect } from "./background-ripple-effect";
 import "./hero.css";
 
-const Home = ({ onStartDrawing, onNavigate }) => {
+const Home = () => {
+  const navigate = useNavigate();
   return (
     <div className="hero-page">
       {/* Background ripple grid */}
@@ -25,7 +27,7 @@ const Home = ({ onStartDrawing, onNavigate }) => {
         <div className="hero-nav-links">
           <span className="hero-nav-link">Features</span>
           <span className="hero-nav-link">About</span>
-          <button className="hero-nav-cta" onClick={() => onNavigate("login")}>Login</button>
+          <button className="hero-nav-cta" onClick={() => navigate("/login")}>Login</button>
         </div>
       </nav>
 
@@ -47,7 +49,7 @@ const Home = ({ onStartDrawing, onNavigate }) => {
         </p>
 
         <div className="hero-actions">
-          <button className="hero-btn-primary" onClick={onStartDrawing}>Start Drawing</button>
+          <button className="hero-btn-primary" onClick={() => navigate("/board")}>Start Drawing</button>
           <button className="hero-btn-secondary">Learn More</button>
         </div>
       </main>
