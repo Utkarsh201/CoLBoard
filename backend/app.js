@@ -2,6 +2,8 @@ import express , {json, urlencoded} from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { userRoutes } from "./routers/userrouter.js";
+import { refreshrouter } from "./routers/refreshrouter.js";
+import { canvasrouter } from "./routers/canvasrouter.js";
 
 const app = express();
 
@@ -15,6 +17,8 @@ app.use(express.urlencoded({ extended: true , limit : '10kb'}));
 
 
 app.use('/user', userRoutes);
+app.use('/user', refreshrouter);
+app.use('/canvas', canvasrouter);
 
 app.get('/',(req,res)=>{
   return res.send("app is running")

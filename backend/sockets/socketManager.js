@@ -1,8 +1,27 @@
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
 export const setupSocket = (io) => {
+
+  io.use((socket, next) => {
+    try {
+      const tokenHeader = socket.handshake.auth?.token || socket.handshake.headers?.authorization || "";
+      const token = tokenHeader.replace(/^Bearer\s+/i, "").trim();
+      
+      if (!token) {
+        return next(new Error("Authentication error: Token is missing"));
+      }
+      
+      const decoded = jwt.verify(token, process.env.ACCESSTOKENSECRET);
+      socket.userId = decoded.id;
+      next();
+    } catch (err) {
+      return next(new Error("Authentication error: Invalid or expired token"));
+    }
+  });
+
   io.on("connection", (socket) => {
-    console.log("A user connected:", socket.id);
+    console.log("A user connected:", socket.id, "| DB User ID:", socket.userId);
 
     // Create a new room
     socket.on("create_room", () => {
