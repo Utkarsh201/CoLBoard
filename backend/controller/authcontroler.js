@@ -65,7 +65,8 @@ const Login = async(req,res)=>{
 }
 
 
-const Logout = async (req, res) => {
+const 
+Logout = async (req, res) => {
     try {
         const incomingRefreshToken = req.cookies.refreshToken;
         if (incomingRefreshToken) {
