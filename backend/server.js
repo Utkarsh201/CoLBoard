@@ -8,10 +8,14 @@ import { setupSocket } from "./sockets/socketManager.js";
 dotenv.config();
 
 const server = http.createServer(app);
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 // Socket.io needs direct access to the raw Node.js http.Server so it can "listen" for WebSocket upgrade requests before Express gets a chance to look at them.
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
   }

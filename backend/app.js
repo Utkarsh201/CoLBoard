@@ -1,4 +1,4 @@
-import express , {json, urlencoded} from "express";
+import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { userRoutes } from "./routers/userrouter.js";
@@ -11,6 +11,10 @@ import dotenv from "dotenv"
 dotenv.config();
 
 const app = express();
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 app.use(helmet());
 
@@ -22,7 +26,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
+    origin: allowedOrigins,
     credentials: true
 }));
 app.use(cookieParser());

@@ -17,7 +17,7 @@ const roomSchema = new mongoose.Schema({
     required: true
   },
   drawingData: {
-    type: Array, // Array of JSON objects representing lines
+    type: [mongoose.Schema.Types.Mixed],
     default: []
   }
 }, { timestamps: true });

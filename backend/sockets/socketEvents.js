@@ -1,0 +1,17 @@
+export const SOCKET_EVENTS = {
+  CREATE_ROOM: "create_room",
+  JOIN_ROOM: "join_room",
+  LEAVE_ROOM: "leave_room",
+  GET_ROOM_STATE: "get_room_state",
+  CANVAS_UPDATE: "canvas_update",
+  CLEAR_CANVAS: "clear_canvas",
+  ROOM_CREATED: "room_created",
+  ROOM_JOINED: "room_joined",
+  ROOM_LEFT: "room_left",
+  ROOM_STATE: "room_state",
+  ROOM_ERROR: "room_error",
+  ROOM_FULL: "room_full",
+  LOAD_CANVAS: "load_canvas",
+  USER_LIST_UPDATE: "user_list_update",
+  CANVAS_UPDATED: "canvas_updated",
+};
