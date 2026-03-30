@@ -6,6 +6,9 @@ import { refreshrouter } from "./routers/refreshrouter.js";
 import { canvasrouter } from "./routers/canvasrouter.js";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import dotenv from "dotenv"
+
+dotenv.config();
 
 const app = express();
 
@@ -19,7 +22,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.use(cors({
-    origin: "https://whiteboard-application-black.vercel.app",
+    origin: process.env.FRONTEND_URL,
     credentials: true
 }));
 app.use(cookieParser());

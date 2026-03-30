@@ -8,5 +8,4 @@ userRoutes.post('/register',Register)
 userRoutes.post('/login',Login)
 userRoutes.post('/logout', verify, Logout)
 
-
 export {userRoutes}
