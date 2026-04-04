@@ -133,6 +133,21 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 
+.auth-submit:disabled {
+  cursor: wait;
+  background: #555;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.8;
+}
+
+.auth-helper {
+  margin: -4px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #6c6c6c;
+}
+
 /* Footer link */
 .auth-footer {
   text-align: center;
@@ -176,4 +191,15 @@
   flex: 1;
   height: 1px;
   background: #e8e8e8;
+}
+
+@media (max-width: 600px) {
+  .auth-page {
+    padding: 20px;
+  }
+
+  .auth-card {
+    max-width: none;
+    padding: 28px 22px;
+  }
 }

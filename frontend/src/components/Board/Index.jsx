@@ -1,149 +1,174 @@
-import { useContext, useEffect,useRef } from 'react'
+import { useContext, useEffect, useMemo, useRef } from "react";
+import getStroke from "perfect-freehand";
 import rough from "roughjs/bundled/rough.esm";
-import { BoardContext } from '../../store/BoardContext';
-import { TOOL_ACTION_TYPES, TOOL_ITEMS } from '../../constants';
-import { getSvgPathFromStroke } from '../../utils/Elemenst';
-import getStroke from 'perfect-freehand';
-import classess from "./index.module.css"
+import { TOOL_ACTION_TYPES, TOOL_ITEMS } from "../../constants";
+import { BoardContext } from "../../store/BoardContext";
+import { CanvasContext } from "../../store/CanvasHistory";
+import { getSvgPathFromStroke, serializeElements } from "../../utils/Elemenst";
+import classess from "./index.module.css";
+
 function Canvas() {
+  const canvasref = useRef(null);
+  const textref = useRef(null);
+  const isFirstRender = useRef(true);
+  const {
+    elements,
+    HandleMouseDown,
+    HandleMouseMove,
+    ToolActionType,
+    HandleMouseUp,
+    HandleTextOnblur,
+    UndoHandler,
+    RedoHandler,
+    SetElementsOnRefresh,
+  } = useContext(BoardContext);
+  const { currentRoom } = useContext(CanvasContext);
 
-  const canvasref = useRef();
-  const textref = useRef();
-  const isFirstRender = useRef(true)
-  const {elements,HandleMouseDown,HandleMouseMove,ToolActionType,HandleMouseUp,HandleTextOnblur,UndoHandler,RedoHandler,SetElementsOnRefresh} = useContext(BoardContext);
- 
+  const activeTextElement =
+    ToolActionType === TOOL_ACTION_TYPES.WRITING && elements.length > 0
+      ? elements[elements.length - 1]
+      : null;
 
-  useEffect(()=>{
-      const textarea = textref.current
-      if(ToolActionType===TOOL_ACTION_TYPES.WRITING){
-        setTimeout(() => {
-          textarea.focus()
-        }, 0);
-      }
-  },[ToolActionType])
+  useEffect(() => {
+    const canvas = canvasref.current;
+    if (!canvas) return undefined;
 
-  useEffect(()=>{
-      const canvas = canvasref.current;
+    const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+    };
 
-      const roughcanvas = rough.canvas(canvas);
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
 
-      const context = canvas.getContext("2d");
-      context.save();
-      
-      elements.forEach(element => {
-          switch (element.type) {
-            case TOOL_ITEMS.LINE:
-            case TOOL_ITEMS.ARROW:
-            case TOOL_ITEMS.CIRCLE:
-            case TOOL_ITEMS.RECTANGLE:
-                roughcanvas.draw(element.roughEle);
-                break;
-            case TOOL_ITEMS.BRUSH:
-                context.fillStyle = element.stroke;
-                const path = new Path2D(getSvgPathFromStroke(getStroke(element.points)));
-                context.fill(path);
-                context.restore();
-                 break;
-            case TOOL_ITEMS.TEXT:
-              context.textBaseline = "top";
-              context.font = `${element.size}px Caveat`;
-              context.fillStyle = element.stroke;
-              context.fillText(element.text, element.x1, element.y1);
-              context.restore();
-                break;
-            default:
-              return;  
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, []);
+
+  useEffect(() => {
+    const textarea = textref.current;
+    if (!textarea || ToolActionType !== TOOL_ACTION_TYPES.WRITING) return;
+
+    setTimeout(() => {
+      textarea.focus();
+    }, 0);
+  }, [ToolActionType]);
+
+  useEffect(() => {
+    const canvas = canvasref.current;
+    if (!canvas) return;
+
+    const context = canvas.getContext("2d");
+    const roughcanvas = rough.canvas(canvas);
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    elements.forEach((element) => {
+      switch (element.type) {
+        case TOOL_ITEMS.LINE:
+        case TOOL_ITEMS.ARROW:
+        case TOOL_ITEMS.CIRCLE:
+        case TOOL_ITEMS.RECTANGLE: {
+          if (element.roughEle) {
+            roughcanvas.draw(element.roughEle);
           }
-      });
-
-      return ()=>{
-           context.clearRect(0,0,canvas.height,canvas.width)
+          break;
+        }
+        case TOOL_ITEMS.BRUSH: {
+          context.save();
+          context.fillStyle = element.stroke;
+          const path = new Path2D(getSvgPathFromStroke(getStroke(element.points)));
+          context.fill(path);
+          context.restore();
+          break;
+        }
+        case TOOL_ITEMS.TEXT: {
+          context.save();
+          context.textBaseline = "top";
+          context.font = `${element.size}px Caveat`;
+          context.fillStyle = element.stroke;
+          context.fillText(element.text, element.x1, element.y1);
+          context.restore();
+          break;
+        }
+        default:
+          break;
       }
+    });
+  }, [elements]);
 
-  },[elements])
-
-function mousedownhandler(event){
-      HandleMouseDown(event)
-}
-
-function mousemovehandler(event){
-         if(ToolActionType===TOOL_ACTION_TYPES.DRAWING ||ToolActionType===TOOL_ACTION_TYPES.ERASING){
-              HandleMouseMove(event)
-         }
-}
-
-function mouseuphandler(){
-        HandleMouseUp()
-}
-
-function OnBlureTextHandler(text){
-      HandleTextOnblur(text)
-}
-
-
-
-useEffect(()=>{
-      function Handlekeydown(event){
-         
-            if(event.ctrlKey && event.key==='z'){
-                 UndoHandler();
-            }
-            else if(event.ctrlKey && event.key==='y'){
-                 RedoHandler();
-            }
+  useEffect(() => {
+    const Handlekeydown = (event) => {
+      if (event.ctrlKey && event.key === "z") {
+        UndoHandler();
+      } else if (event.ctrlKey && event.key === "y") {
+        RedoHandler();
       }
-      document.addEventListener("keydown",Handlekeydown);
+    };
 
-      return ()=> document.removeEventListener("keydown",Handlekeydown)
-},[UndoHandler,RedoHandler])
+    document.addEventListener("keydown", Handlekeydown);
+    return () => document.removeEventListener("keydown", Handlekeydown);
+  }, [UndoHandler, RedoHandler]);
 
-useEffect(() => {
-  if (isFirstRender.current) {
-    isFirstRender.current = false;
-    return;
-  }
+  useEffect(() => {
+    if (currentRoom) return;
 
-  localStorage.setItem(
-    "canvaselements",
-    JSON.stringify(elements)
-  );
-}, [elements]);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
 
-useEffect(()=>{
-     const canvasele = localStorage.getItem("canvaselements")
-     if(canvasele){
-         SetElementsOnRefresh(JSON.parse(canvasele))
-     }
-},[])
+    localStorage.setItem("canvaselements", JSON.stringify(serializeElements(elements)));
+  }, [currentRoom, elements]);
+
+  useEffect(() => {
+    if (currentRoom) return;
+
+    const savedCanvas = localStorage.getItem("canvaselements");
+    if (savedCanvas) {
+      SetElementsOnRefresh(JSON.parse(savedCanvas));
+    }
+  }, [currentRoom, SetElementsOnRefresh]);
+
+  const textBoxStyle = useMemo(() => {
+    if (!activeTextElement) return {};
+
+    return {
+      top: activeTextElement.y1,
+      left: activeTextElement.x1,
+      color: activeTextElement.stroke,
+      fontSize: `${activeTextElement.size}px`,
+    };
+  }, [activeTextElement]);
 
   return (
-     
     <>
-    {ToolActionType===TOOL_ACTION_TYPES.WRITING && 
-    <textarea
-    ref={textref}
-    type="text"
-    className={classess.textElementBox}
-    style={{
-      top:elements[elements.length-1].y1,
-      left:elements[elements.length-1].x1,
-      color:`${elements[elements.length-1]?.stroke}`,
-      fontSize:`${elements[elements.length-1]?.size}px`
-    }}
-    onBlur={(e)=>{OnBlureTextHandler(e.target.value)}}
-    
-     >
-    </textarea>
-    }
-    <canvas ref={canvasref} id='canvas'
-    onMouseDown={mousedownhandler}
-    onMouseMove={mousemovehandler}
-    onMouseUp={mouseuphandler}
-    />
+      {activeTextElement ? (
+        <textarea
+          ref={textref}
+          type="text"
+          className={classess.textElementBox}
+          style={textBoxStyle}
+          onBlur={(event) => {
+            HandleTextOnblur(event.target.value);
+          }}
+        />
+      ) : null}
+      <canvas
+        ref={canvasref}
+        id="canvas"
+        onMouseDown={HandleMouseDown}
+        onMouseMove={(event) => {
+          if (
+            ToolActionType === TOOL_ACTION_TYPES.DRAWING ||
+            ToolActionType === TOOL_ACTION_TYPES.ERASING
+          ) {
+            HandleMouseMove(event);
+          }
+        }}
+        onMouseUp={HandleMouseUp}
+      />
     </>
-  )
+  );
 }
 
-export default Canvas
+export default Canvas;

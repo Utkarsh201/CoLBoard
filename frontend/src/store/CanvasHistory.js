@@ -1,13 +1,25 @@
 import { createContext } from "react";
 
-export const canvascontext = createContext({
-        logopen:false,
-        Accesstoken:"",
-        sidebarOpen:false,
-        CurrentCanvas:"",
-        setAccesstoken:()=>{},
-        setlogopen:()=>{},
-        setSidebarOpen:()=>{},
-        toggleSidebar:()=>{},
-        SetCurrentCanvas:()=>{}
-})
+export const CanvasContext = createContext({
+  accessToken: "",
+  isAuthenticated: false,
+  sidebarOpen: false,
+  currentCanvas: "",
+  currentRoom: "",
+  roomUsers: [],
+  socketStatus: "idle",
+  socketError: "",
+  socket: null,
+  setAccessToken: () => {},
+  setSidebarOpen: () => {},
+  toggleSidebar: () => {},
+  setCurrentCanvas: () => {},
+  login: async () => {},
+  signup: async () => {},
+  logout: async () => {},
+  createRoom: async () => {},
+  joinRoom: async () => {},
+  leaveRoom: async () => {},
+  clearSharedCanvas: () => {},
+  requestRoomState: () => {},
+});

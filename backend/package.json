@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "license": "ISC",
-  "author": "vivek singh",
+  "author": "Utkarsh Gupta",
   "type": "module",
   "main": "server.js",
   "scripts": {
