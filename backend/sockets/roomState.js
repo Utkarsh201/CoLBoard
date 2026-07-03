@@ -111,6 +111,8 @@ const scheduleRoomDeletion = (io, roomId) => {
   }, ROOM_DELETION_DELAY_MS);
 };
 
+
+
 export const removeSocketFromRoom = async (
   io,
   socket,

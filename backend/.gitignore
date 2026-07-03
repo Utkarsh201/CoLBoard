@@ -8,6 +8,10 @@ node_modules/
 !.env.example
 !.env.template
 
+env
+
+revision.js
+
 # Logs
 logs/
 *.log

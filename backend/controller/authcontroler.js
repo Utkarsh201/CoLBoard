@@ -6,7 +6,7 @@ const Register = async(req,res)=>{
       try {
         const {username,email,password} = req.body
         if(!username || !email || !password){
-              return errorResponse(res,401,"missing Credentials")
+              return errorResponse(res,400,"missing Credentials")
         }
         const isexist = await User.findOne({email})
         if(isexist){
@@ -34,7 +34,7 @@ const Login = async(req,res)=>{
       
          const {email,password} = req.body 
          if(!email || !password){
-              return errorResponse(res,401,"missing Credentials")
+              return errorResponse(res,400,"missing Credentials")
         }
         const user = await User.findOne({email})
         if(!user){

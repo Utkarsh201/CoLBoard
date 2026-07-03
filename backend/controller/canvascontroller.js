@@ -1,6 +1,6 @@
 import { Canvas} from "../models/canvasmodel.js"
 import { errorResponse, successResponse } from "../utils/responce.js";
-
+import { sanitizeElements } from "../sockets/roomState.js";
 
 const getallcanvas = async(req,res)=>{
       try {
@@ -31,10 +31,12 @@ const getcanvas = async(req,res)=>{
        }
 }
 
+
+
 const CreateCanvas = async(req,res)=>{
          try {
              const userid = req.userId
-             const newcanvas = await Canvas({
+             const newcanvas = new Canvas({
                    owner:userid,
                    elements:[]
              });
@@ -48,15 +50,16 @@ const UpdateCanvas = async(req,res)=>{
         try {
             const  {canvasId,elements} = req.body 
             const userId = req.userId 
+            const safeElements = sanitizeElements(elements);
             const canvas = await Canvas.findById(canvasId)
             if(!canvas){
-                   return errorResponse(res,404,"canvas not found")
+                return errorResponse(res,404,"canvas not found")
             }
     
             if(canvas.owner.toString()!==userId){
-                  return errorResponse(res,403,"not autherized person to get canvas")
+                return errorResponse(res,403,"not autherized person to get canvas")
             }
-            canvas.elements = elements
+            canvas.elements = safeElements
             await canvas.save()
             successResponse(res,200,"canvas updated successfully")
         } catch (error) {

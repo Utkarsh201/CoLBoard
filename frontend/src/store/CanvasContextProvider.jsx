@@ -62,6 +62,7 @@ const CanvasContextProvider = ({ children }) => {
   const [roomUsers, setRoomUsers] = useState([]);
   const [socketStatus, setSocketStatus] = useState("idle");
   const [socketError, setSocketError] = useState("");
+  const [activeSocket, setActiveSocket] = useState(null);
   const socketRef = useRef(null);
   const roomSessionRef = useRef(readStoredRoomSession());
 
@@ -73,6 +74,7 @@ const CanvasContextProvider = ({ children }) => {
       socketRef.current.disconnect();
       socketRef.current = null;
     }
+    setActiveSocket(null);
   }, []);
 
   useEffect(() => {
@@ -102,6 +104,7 @@ const CanvasContextProvider = ({ children }) => {
     });
 
     socketRef.current = socket;
+    setActiveSocket(socket);
     setSocketStatus("connecting");
     setSocketError("");
 
@@ -395,7 +398,7 @@ const CanvasContextProvider = ({ children }) => {
       roomUsers,
       socketStatus,
       socketError,
-      socket: socketRef.current,
+      socket: activeSocket,
       setAccessToken,
       setSidebarOpen,
       toggleSidebar,
@@ -411,6 +414,7 @@ const CanvasContextProvider = ({ children }) => {
     }),
     [
       accessToken,
+      activeSocket,
       clearSharedCanvas,
       createRoom,
       currentCanvas,
