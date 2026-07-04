@@ -20,11 +20,11 @@ const Register = async(req,res)=>{
         })
         
         await user.save()
-        return successResponse(res,200,"user registered successfully",{username,email})
+        return successResponse(res,201,"user registered successfully",{username,email})
 
       } catch (error) {
-        console.log(error)
-        return errorResponse(res,500,"something went wrong on server side!!!",error)
+        console.log(error);
+        return errorResponse(res,500,"something went wrong on server side!!!")
       }
 }
 
@@ -58,9 +58,9 @@ const Login = async(req,res)=>{
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        successResponse(res,200,"Logged in !!",{access_token:access_token})
+        return successResponse(res,200,"Logged in !!",{access_token:access_token})
       } catch (error) {
-              return errorResponse(res,500,"something went wrong!!",error)
+              return errorResponse(res,500,"something went wrong!!")
       }
 }
 
@@ -86,7 +86,7 @@ Logout = async (req, res) => {
         
         return successResponse(res, 200, "Logged out successfully");
     } catch (error) {
-        return errorResponse(res, 500, "Something went wrong during logout", error);
+        return errorResponse(res, 500, "Something went wrong during logout");
     }
 }
 

@@ -6,7 +6,7 @@ const getallcanvas = async(req,res)=>{
       try {
          const userId = req.userId
          const allcanvas = await Canvas.find({owner:userId}).sort({createdAt:-1});
-         successResponse(res,200,"cancas loaded successfully",allcanvas)
+         return successResponse(res,200,"cancas loaded successfully",allcanvas)
       } catch (error) {
         return errorResponse(res,500,"something went wrong")
       }
@@ -25,7 +25,7 @@ const getcanvas = async(req,res)=>{
         if(canvas.owner.toString()!==userid){
             return errorResponse(res,403,"access denied")
         }
-        successResponse(res,200,"canvas fetched successfully",canvas)
+        return successResponse(res,200,"canvas fetched successfully",canvas)
        } catch (error) {
            return errorResponse(res,500,"something went wrong")
        }
@@ -41,9 +41,9 @@ const CreateCanvas = async(req,res)=>{
                    elements:[]
              });
              await newcanvas.save();
-             successResponse(res,200,"canvas created",{canvasId:newcanvas._id})
+             return successResponse(res,200,"canvas created",{canvasId:newcanvas._id})
          } catch (error) {
-            errorResponse(res,500,"something went wrong!!",error)
+            return errorResponse(res,500,"something went wrong!!")
          }
 }
 const UpdateCanvas = async(req,res)=>{
@@ -61,7 +61,7 @@ const UpdateCanvas = async(req,res)=>{
             }
             canvas.elements = safeElements
             await canvas.save()
-            successResponse(res,200,"canvas updated successfully")
+            return successResponse(res,200,"canvas updated successfully")
         } catch (error) {
              return errorResponse(res,500,"something went wrong") 
         }
@@ -79,9 +79,9 @@ const DeleteCanvas = async(req,res)=>{
                   return errorResponse(res,403,"not autherized person to delete canvas")
             }
             await Canvas.findByIdAndDelete(canvasId);
-              successResponse(res,200,"canvas delete successfully")
+              return successResponse(res,200,"canvas delete successfully")
         } catch (error) {
-             return errorResponse(res,500,"something went wrong",error) 
+             return errorResponse(res,500,"something went wrong") 
         }
 
 }
