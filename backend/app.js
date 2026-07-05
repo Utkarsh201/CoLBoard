@@ -34,6 +34,7 @@ app.use(express.json({limit : '10kb'}));
 app.use(express.urlencoded({ extended: true , limit : '10kb'}));
 
 
+
 app.use('/user', userRoutes);
 app.use('/user', refreshrouter);
 app.use('/canvas', canvasrouter);
@@ -42,5 +43,15 @@ app.get('/',(req,res)=>{
   return res.send("app is running")
 })
 
+// 404 handler for unknown routes
+app.use((req, res) => {
+  return res.status(404).json({ success: false, message: "Route not found" });
+});
+
+// Global error handler — catches any unhandled errors from routes/middleware
+app.use((err, req, res, next) => {
+  console.error("Unhandled error:", err);
+  return res.status(500).json({ success: false, message: "Internal server error" });
+});
 
 export default app;
