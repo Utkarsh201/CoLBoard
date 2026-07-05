@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Canvas} from "../models/canvasmodel.js"
 import { errorResponse, successResponse } from "../utils/responce.js";
 import { sanitizeElements } from "../sockets/roomState.js";
@@ -16,6 +17,9 @@ const getcanvas = async(req,res)=>{
        try {
         const userid = req.userId 
         const canvasId = req.params.id 
+        if (!mongoose.Types.ObjectId.isValid(canvasId)) {
+            return errorResponse(res, 400, "Invalid canvas ID");
+        }
  
         const canvas = await Canvas.findById(canvasId);
         if(!canvas){
@@ -50,6 +54,9 @@ const UpdateCanvas = async(req,res)=>{
         try {
             const  {canvasId,elements} = req.body 
             const userId = req.userId 
+            if (!mongoose.Types.ObjectId.isValid(canvasId)) {
+                return errorResponse(res, 400, "Invalid canvas ID");
+            }
             const safeElements = sanitizeElements(elements);
             const canvas = await Canvas.findById(canvasId)
             if(!canvas){
@@ -70,6 +77,9 @@ const DeleteCanvas = async(req,res)=>{
          try {
             const  canvasId = req.params.id 
             const userId = req.userId 
+            if (!mongoose.Types.ObjectId.isValid(canvasId)) {
+                return errorResponse(res, 400, "Invalid canvas ID");
+            }
             const canvas = await Canvas.findById(canvasId)
             if(!canvas){
                    return errorResponse(res,404,"canvas not found")

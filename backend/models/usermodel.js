@@ -16,6 +16,7 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true,
         trim: true,
+        lowercase: true,
         validate: {
             validator: validator.isEmail,
             message: "Please enter valide email"
@@ -84,6 +85,6 @@ UserSchema.methods.GenerateRefreshToken = function () {
 }
 
 
-const User = mongoose.model("user", UserSchema);
+const User = mongoose.model("User", UserSchema);
 
 export default User;
