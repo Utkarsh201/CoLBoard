@@ -86,6 +86,7 @@ apiClient.interceptors.response.use(
     } catch (refreshError) {
       localStorage.removeItem("token");
       resolveRefreshQueue(refreshError, null);
+      window.location.href = "/login";
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

@@ -33,7 +33,7 @@ const Signup = () => {
       return;
     }
 
-    if (password.length < 6) {
+    if (password.length < 8) {
       toast.error("Password should be at least 6 characters.");
       return;
     }
@@ -49,7 +49,12 @@ const Signup = () => {
       toast.success("Account created successfully.");
       navigate("/board", { replace: true });
     } catch (error) {
-      toast.error(error?.response?.data?.message || error?.message || "Unable to create account.");
+      if (error.registrationSucceeded) {
+        toast.success("Account created! Please sign in manually.");
+        navigate("/login", { replace: true });
+      } else {
+        toast.error(error?.response?.data?.message || error?.message || "Unable to create account.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -129,6 +134,7 @@ const Signup = () => {
               autoComplete="new-password"
             />
           </div>
+
 
           <p className="auth-helper">New accounts are signed in immediately after registration.</p>
 

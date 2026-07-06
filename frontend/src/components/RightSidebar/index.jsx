@@ -130,6 +130,7 @@ export default function RightSidebar() {
   };
 
   const handleDelete = async (canvasId) => {
+    if (!window.confirm("Are you sure you want to delete this canvas?")) return;
     try {
       const { data } = await apiClient.delete(`/canvas/delete/${canvasId}`);
       if (data?.success) {

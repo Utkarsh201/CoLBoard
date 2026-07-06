@@ -290,7 +290,13 @@ const CanvasContextProvider = ({ children }) => {
   const signup = useCallback(
     async ({ username, email, password }) => {
       await apiClient.post("/user/register", { username, email, password });
-      return login({ email, password });
+      try {
+        return await login({ email, password });
+      } catch (loginError) {
+        // Account was created, but auto-login failed
+        loginError.registrationSucceeded = true;
+        throw loginError;
+      }
     },
     [login]
   );

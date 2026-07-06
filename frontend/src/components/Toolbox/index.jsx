@@ -73,7 +73,7 @@ const Toolbox = () => {
            min={activetoolitem === TOOL_ITEMS.TEXT ? 12 : 1}
            max={activetoolitem === TOOL_ITEMS.TEXT ? 64 : 10}
            step={1}
-           size={size}
+           value={size}
            onChange={(e)=>{ChangeSize(activetoolitem,e.target.value)}}
             />
         </div>}

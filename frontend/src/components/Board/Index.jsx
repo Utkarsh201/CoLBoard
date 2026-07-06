@@ -125,7 +125,11 @@ function Canvas() {
 
     const savedCanvas = localStorage.getItem("canvaselements");
     if (savedCanvas) {
-      SetElementsOnRefresh(JSON.parse(savedCanvas));
+      try {
+        SetElementsOnRefresh(JSON.parse(savedCanvas));
+      } catch {
+        localStorage.removeItem("canvaselements");
+      }
     }
   }, [currentRoom, SetElementsOnRefresh]);
 
