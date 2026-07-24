@@ -21,6 +21,24 @@ apiClient.interceptors.request.use((config) => {
 
 let isRefreshing = false;
 let refreshQueue = [];
+let tokenListeners = [];
+
+export const addTokenListener = (cb) => {
+  tokenListeners.push(cb);
+  return () => {
+    tokenListeners = tokenListeners.filter((listener) => listener !== cb);
+  };
+};
+
+const notifyTokenListeners = (token) => {
+  tokenListeners.forEach((cb) => {
+    try {
+      cb(token);
+    } catch (err) {
+      console.error("Failed to notify token listener:", err);
+    }
+  });
+};
 
 function resolveRefreshQueue(error, token) {
   refreshQueue.forEach(({ resolve, reject }) => {
@@ -78,6 +96,7 @@ apiClient.interceptors.response.use(
       }
 
       localStorage.setItem("token", newToken);
+      notifyTokenListeners(newToken);
       resolveRefreshQueue(null, newToken);
 
       originalRequest.headers = originalRequest.headers || {};
@@ -85,6 +104,7 @@ apiClient.interceptors.response.use(
       return apiClient(originalRequest);
     } catch (refreshError) {
       localStorage.removeItem("token");
+      notifyTokenListeners("");
       resolveRefreshQueue(refreshError, null);
       window.location.href = "/login";
       return Promise.reject(refreshError);

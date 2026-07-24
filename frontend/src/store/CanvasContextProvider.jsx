@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import { apiClient } from "../utils/apiClient";
+import { apiClient, addTokenListener } from "../utils/apiClient";
 import { SOCKET_EVENTS } from "../socketEvents";
 import { CanvasContext } from "./CanvasHistory";
 
@@ -213,6 +213,13 @@ const CanvasContextProvider = ({ children }) => {
       cleanupSocket();
     }
   }, [cleanupSocket]);
+
+  useEffect(() => {
+    const unsubscribe = addTokenListener((token) => {
+      setAccessToken(token || "");
+    });
+    return () => unsubscribe();
+  }, [setAccessToken]);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((value) => !value);
