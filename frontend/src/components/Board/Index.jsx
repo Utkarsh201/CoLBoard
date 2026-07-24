@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useRef } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import getStroke from "perfect-freehand";
 import rough from "roughjs/bundled/rough.esm";
 import { TOOL_ACTION_TYPES, TOOL_ITEMS } from "../../constants";
@@ -11,6 +11,7 @@ function Canvas() {
   const canvasref = useRef(null);
   const textref = useRef(null);
   const isFirstRender = useRef(true);
+  const [resizeCounter, setResizeCounter] = useState(0);
   const {
     elements,
     HandleMouseDown,
@@ -36,6 +37,7 @@ function Canvas() {
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      setResizeCounter((c) => c + 1);
     };
 
     resizeCanvas();
@@ -94,7 +96,7 @@ function Canvas() {
           break;
       }
     });
-  }, [elements]);
+  }, [elements, resizeCounter]);
 
   useEffect(() => {
     const Handlekeydown = (event) => {

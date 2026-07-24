@@ -8,9 +8,11 @@ export default function BoardSyncBridge() {
   const { currentRoom, socket } = useContext(CanvasContext);
   const { elements, SetelementsOnApicall } = useContext(BoardContext);
   const skipNextEmitRef = useRef(false);
+  const roomReadyRef = useRef(false);
 
   useEffect(() => {
     if (!socket || !currentRoom) return undefined;
+    roomReadyRef.current = false;
 
     const applyIncomingElements = (payload) => {
       const nextElements = Array.isArray(payload) ? payload : payload?.elements;
@@ -18,6 +20,7 @@ export default function BoardSyncBridge() {
 
       skipNextEmitRef.current = true;
       SetelementsOnApicall(nextElements);
+      roomReadyRef.current = true;
     };
 
     const handleCanvasUpdated = (payload) => {
@@ -32,11 +35,13 @@ export default function BoardSyncBridge() {
     return () => {
       socket.off(SOCKET_EVENTS.LOAD_CANVAS, applyIncomingElements);
       socket.off(SOCKET_EVENTS.CANVAS_UPDATED, handleCanvasUpdated);
+      roomReadyRef.current = false;
     };
   }, [currentRoom, socket, SetelementsOnApicall]);
 
   useEffect(() => {
     if (!socket || !currentRoom) return undefined;
+    if (!roomReadyRef.current) return undefined;
 
     if (skipNextEmitRef.current) {
       skipNextEmitRef.current = false;
