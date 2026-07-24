@@ -23,7 +23,17 @@ const Register = async (req, res) => {
         return successResponse(res, 201, "user registered successfully", { username, email })
 
     } catch (error) {
-        console.log(error);
+        if (error.name === "ValidationError") {
+            const message = Object.values(error.errors)
+                .map((err) => err.message)
+                .join(", ");
+            return errorResponse(res, 400, message);
+        }
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyPattern)[0];
+            return errorResponse(res, 400, `A user with that ${field} already exists`);
+        }
+        console.error(error);
         return errorResponse(res, 500, "something went wrong on server side!!!")
     }
 }
@@ -60,6 +70,7 @@ const Login = async (req, res) => {
 
         return successResponse(res, 200, "Logged in !!", { access_token: access_token })
     } catch (error) {
+        console.error("Login error:", error);
         return errorResponse(res, 500, "something went wrong!!")
     }
 }
