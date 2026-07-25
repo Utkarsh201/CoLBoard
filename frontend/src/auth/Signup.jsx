@@ -8,7 +8,7 @@ import "./auth.css";
 const Signup = () => {
   const navigate = useNavigate();
   const { isAuthenticated, signup } = useContext(CanvasContext);
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -23,7 +23,7 @@ const Signup = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!name.trim() || !email.trim() || !password.trim()) {
+    if (!username.trim() || !email.trim() || !password.trim()) {
       toast.error("Please fill in all required fields.");
       return;
     }
@@ -42,7 +42,7 @@ const Signup = () => {
 
     try {
       await signup({
-        username: name.trim(),
+        username: username.trim(),
         email: email.trim(),
         password,
       });
@@ -76,17 +76,17 @@ const Signup = () => {
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="auth-field">
-            <label className="auth-label" htmlFor="signup-name">
-              Full Name
+            <label className="auth-label" htmlFor="signup-username">
+              Username
             </label>
             <input
-              id="signup-name"
+              id="signup-username"
               className="auth-input"
               type="text"
-              placeholder="John Doe"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              autoComplete="name"
+              placeholder="johndoe"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              autoComplete="username"
             />
           </div>
 
